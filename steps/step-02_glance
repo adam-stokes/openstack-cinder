@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Path to executing script
+SCRIPT=$(realpath $0)
+
+# Directory housing script
+SCRIPTPATH=$(dirname $SCRIPT)
+
+tmpfile=$(mktemp)
+
+$SCRIPTPATH/share/novarc > $tmpfile
+cat $SCRIPTPATH/share/common.sh >> $tmpfile
+cat $SCRIPTPATH/share/glance.sh >> $tmpfile
+
+juju scp $tmpfile nova-cloud-controller/0:glance.sh
+juju ssh nova-cloud-controller/0 "bash glance.sh"
